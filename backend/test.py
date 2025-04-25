@@ -9,7 +9,7 @@ import json
 from typing import Sequence
 from pathlib import Path
 
-def serialize_telemetry_events(events: Sequence[BaseTelemetryEvent], output_path: str = "events.jsonl"):
+def serialize_telemetry_events(events: Sequence[BaseTelemetryEvent], output_path: str = "data/events.jsonl"):
     output_file = Path(output_path)
     with output_file.open("w", encoding="utf-8") as f:
         for event in events:

@@ -1,8 +1,13 @@
 # Virtual environmnt
 env/
+backend/env/
 
 # Env vars
 .env
 
 # Local copy of browser use
 browser-use/
+backend/browser-use
+
+# Data
+backend/data
