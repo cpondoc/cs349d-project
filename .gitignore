@@ -3,3 +3,6 @@ env/
 
 # Env vars
 .env
+
+# Local copy of browser use
+browser-use/
