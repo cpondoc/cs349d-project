@@ -69,10 +69,10 @@ export default function TelemetryDashboard() {
       (event) =>
         (event.name === "agent_run" && event.properties?.agent_id === runId) ||
         (event.name === "agent_step" && event.properties?.agent_id === runId) ||
+        (event.name === "agent_step_response" && event.properties?.agent_id === runId) ||
         (event.name === "agent_end" && event.properties?.agent_id === runId) ||
         event.name === "controller_registered_functions",
     )
-
     setSelectedRunEvents(runEvents)
   }
 
