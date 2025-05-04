@@ -87,6 +87,10 @@ function getEventSummary(event: TelemetryEvent): string {
       return `Run completed (${event.properties?.success ? "Success" : "Failed"})`
     case "controller_registered_functions":
       return `${event.properties?.registered_functions?.length || 0} functions registered`
+    case "agent_overall_step":
+      return event.properties?.step === 1
+        ? "Initialization of Agent"
+        : `${event.properties?.previous_goal}`
     default:
       return event.name
   }

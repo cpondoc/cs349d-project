@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import json
+import uuid
 from typing import Sequence
 from pathlib import Path
 
@@ -89,14 +90,23 @@ def collapse_telemetry_events(
 
 
 def serialize_telemetry_events(
-    events: Sequence[BaseTelemetryEvent], output_path: str = "data/new_events.jsonl"
+    events: Sequence["BaseTelemetryEvent"], output_dir: str = "data"
 ):
-    output_file = Path(output_path)
-    with output_file.open("w", encoding="utf-8") as f:
+    """
+    Save to JSONL file
+    """
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    file_uuid = uuid.uuid4()
+    output_path = output_dir / f"{file_uuid}.jsonl"
+
+    with output_path.open("w", encoding="utf-8") as f:
         for event in events:
             obj = {"name": event.name, "properties": event.properties}
             f.write(json.dumps(obj) + "\n")
-    print(f"✅ Saved {len(events)} events to {output_file.resolve()}")
+
+    print(f"✅ Saved {len(events)} events to {output_path.resolve()}")
 
 
 async def main():

@@ -23,7 +23,7 @@ playwright install chromium
 Finally, run the test file:
 
 ```bash
-python3 test.py
+python3 main.py
 ```
 
 ### Frontend
