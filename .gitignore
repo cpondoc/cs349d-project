@@ -11,4 +11,7 @@ backend/browser-use
 
 # Data
 backend/data
+
+# Miscellany
+__pycache__
 .DS_Store
