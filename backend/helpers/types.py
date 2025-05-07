@@ -37,4 +37,13 @@ class AgentOverallStepTelemetryEvent(BaseTelemetryEvent):
     next_goal: str
     actions_response: list[str]
 
+    # Add browser state fields
+    browser_url: str | None = None
+    browser_title: str | None = None
+    browser_tabs: list[dict] | None = None
+    browser_screenshot: str | None = None
+    browser_pixels_above: int | None = None
+    browser_pixels_below: int | None = None
+    browser_errors: list[str] | None = None
+
     name: str = "agent_overall_step"
