@@ -28,6 +28,7 @@ class AgentOverallStepTelemetryEvent(BaseTelemetryEvent):
     step_error: list[str]
     consecutive_failures: int
     step_actions: list[dict]
+    page_screenshot: str
 
     registered_functions: list[RegisteredFunction]
 

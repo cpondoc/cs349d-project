@@ -82,11 +82,13 @@ def collapse_telemetry_events(
                 memory=resp_ev.memory,
                 next_goal=resp_ev.next_goal,
                 actions_response=resp_ev.actions,
+                page_screenshot=getattr(step_ev, "page_screenshot", None),
             )
         )
 
     collapsed_events.extend(agent_ends)
     return collapsed_events
+
 
 
 def serialize_telemetry_events(
