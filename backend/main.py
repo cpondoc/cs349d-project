@@ -21,6 +21,7 @@ from pathlib import Path
 from helpers.types import AgentOverallStepTelemetryEvent
 from collections import defaultdict
 from typing import Sequence
+from helpers.supabase_client import upload_to_reports_bucket
 
 
 def collapse_telemetry_events(
@@ -95,7 +96,7 @@ def serialize_telemetry_events(
     events: Sequence["BaseTelemetryEvent"], output_dir: str = "data"
 ):
     """
-    Save to JSONL file
+    Save to JSONL file and upload to Supabase
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -110,13 +111,22 @@ def serialize_telemetry_events(
 
     print(f"✅ Saved {len(events)} events to {output_path.resolve()}")
 
+    # Upload to Supabase
+    try:
+        upload_to_reports_bucket(str(output_path))
+        print(f"☁️ Uploaded {output_path.name} to Supabase 'reports' bucket.")
+    except Exception as e:
+        print(f"❌ Failed to upload to Supabase: {e}")
+
 
 async def main(task: str = "Compare the price of gpt-4o and DeepSeek-V3"):
+    print(f"Running agent with task: {task}")
     agent = Agent(
         task=task,
         llm=ChatOpenAI(model="gpt-4o"),
     )
     await agent.run()
+    print(f"Agent run completed. Telemetry events: {len(agent.telemetry.private_log)}")
 
     # Collect telemetry
     telemetry = agent.telemetry.private_log

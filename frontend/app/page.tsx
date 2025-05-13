@@ -1,125 +1,69 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { AgentRunsList } from "@/components/agent-runs-list"
-import { EventsList } from "@/components/events-list"
-import { parseJsonl } from "@/lib/parse-jsonl"
-import { fetchTelemetryData } from "@/lib/data-service"
-import type { AgentRun, TelemetryEvent } from "@/lib/types"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { RefreshCw } from "lucide-react"
+import { Card } from "@/components/ui/card"
 
-export default function TelemetryDashboard() {
-  const [telemetryData, setTelemetryData] = useState<TelemetryEvent[]>([])
-  const [agentRuns, setAgentRuns] = useState<AgentRun[]>([])
-  const [selectedRunId, setSelectedRunId] = useState<string | null>(null)
-  const [selectedRunEvents, setSelectedRunEvents] = useState<TelemetryEvent[]>([])
-  const [dataPath, setDataPath] = useState<string>("")
+export default function AgentPage() {
+  const [task, setTask] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [result, setResult] = useState<string | null>(null)
 
-  const loadTelemetryData = async (path: string) => {
-    console.log("HIII")
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setIsLoading(true)
-    try {
-      console.log("IN HERE")
-      const data = await fetchTelemetryData(path)
-      console.log(data)
-      const parsedData = parseJsonl(data)
-      console.log(parsedData)
-      console.log("HEYO")
-      setTelemetryData(parsedData)
+    setResult(null)
 
-      // Extract agent runs
-      const runs: AgentRun[] = []
-      parsedData.forEach((event) => {
-        if (event.name === "agent_run" && event.properties?.agent_id) {
-          runs.push({
-            id: event.properties.agent_id,
-            task: event.properties.task || "Unknown task",
-            model: event.properties.model_name || "Unknown model",
-            timestamp: new Date().toISOString(), // In a real app, you'd extract this from the data
-            events: [],
-          })
-        }
+    try {
+      const response = await fetch('http://localhost:8000/run-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ task }),
       })
 
-      setAgentRuns(runs)
-      setSelectedRunId(null)
-      setSelectedRunEvents([])
+      const data = await response.json()
+      setResult(data.message)
     } catch (error) {
-      console.error("Error loading telemetry data:", error)
-      alert("Error loading telemetry data. Please check the path and try again.")
+      setResult('Error: ' + (error instanceof Error ? error.message : 'Failed to run agent'))
     } finally {
       setIsLoading(false)
     }
   }
 
-  // useEffect(() => {
-  //   if (dataPath) {
-  //     loadTelemetryData(dataPath);
-  //   }
-  // }, [dataPath]);
-
-  const handleRunSelect = (runId: string) => {
-    setSelectedRunId(runId)
-
-    // Filter events for the selected run
-    const runEvents = telemetryData.filter(
-      (event) =>
-        (event.name === "agent_run" && event.properties?.agent_id === runId) ||
-        (event.name === "agent_step" && event.properties?.agent_id === runId) ||
-        (event.name === "agent_overall_step" && event.properties?.agent_id === runId) ||
-        (event.name === "agent_end" && event.properties?.agent_id === runId) ||
-        event.name === "controller_registered_functions",
-    )
-    setSelectedRunEvents(runEvents)
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Browser Agent Telemetry Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Browser Agent</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Telemetry Source</h2>
-              <div className="flex space-x-2">
-                <Input
-                  value={dataPath}
-                  onChange={(e) => setDataPath(e.target.value)}
-                  placeholder="Path to telemetry data"
-                  className="flex-1"
-                />
-                <Button onClick={() => loadTelemetryData(dataPath)} disabled={isLoading}>
-                  {isLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : "Load"}
-                </Button>
-              </div>
+        <Card className="max-w-2xl mx-auto p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="task" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Enter your task
+              </label>
+              <Input
+                id="task"
+                value={task}
+                onChange={(e) => setTask(e.target.value)}
+                placeholder="e.g., Compare the price of gpt-4o and DeepSeek-V3"
+                className="w-full"
+                required
+              />
             </div>
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? 'Running...' : 'Run Agent'}
+            </Button>
+          </form>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Agent Runs</h2>
-              <AgentRunsList runs={agentRuns} selectedRunId={selectedRunId} onRunSelect={handleRunSelect} />
+          {result && (
+            <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <p className="text-gray-900 dark:text-gray-100">{result}</p>
             </div>
-          </div>
-
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                {selectedRunId ? `Events for Run: ${selectedRunId}` : "Select a run to view events"}
-              </h2>
-
-              {selectedRunId ? (
-                <EventsList events={selectedRunEvents} />
-              ) : (
-                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                  <p>Select a run to view its events</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+          )}
+        </Card>
       </div>
     </div>
   )
