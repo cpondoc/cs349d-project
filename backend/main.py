@@ -111,9 +111,9 @@ def serialize_telemetry_events(
     print(f"✅ Saved {len(events)} events to {output_path.resolve()}")
 
 
-async def main():
+async def main(task: str = "Compare the price of gpt-4o and DeepSeek-V3"):
     agent = Agent(
-        task="Compare the price of gpt-4o and DeepSeek-V3",
+        task=task,
         llm=ChatOpenAI(model="gpt-4o"),
     )
     await agent.run()
@@ -124,4 +124,5 @@ async def main():
     serialize_telemetry_events(telemetry)
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

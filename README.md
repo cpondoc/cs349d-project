@@ -11,7 +11,6 @@ Create a new virtual environment and install all the proper packages:
 python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
-python3 test.py
 ```
 
 Then, install Playwright:
@@ -20,10 +19,10 @@ Then, install Playwright:
 playwright install chromium
 ```
 
-Finally, run the test file:
+Finally, run the backend server:
 
 ```bash
-python3 main.py
+uvicorn app:app --reload
 ```
 
 ### Frontend
