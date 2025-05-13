@@ -6,7 +6,6 @@ import Header from "@/components/Header"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Browser Agent Telemetry Dashboard",
   description: "Dashboard for analyzing browser agent telemetry data",
   generator: "v0.dev"
 }
