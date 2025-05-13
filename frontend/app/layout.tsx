@@ -7,7 +7,15 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   description: "Dashboard for analyzing browser agent telemetry data",
-  generator: "v0.dev"
+  generator: "v0.dev",
+  icons: {
+    icon: [
+      {
+        url: "/icon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
