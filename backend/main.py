@@ -93,10 +93,15 @@ def collapse_telemetry_events(
 
 
 def serialize_telemetry_events(
-    events: Sequence["BaseTelemetryEvent"], output_dir: str = "data"
+    events: Sequence["BaseTelemetryEvent"], output_dir: str = "data", task: str = None
 ):
     """
     Save to JSONL file and upload to Supabase
+    
+    Args:
+        events: Sequence of telemetry events to serialize
+        output_dir: Directory to save the output file (default: "data")
+        task: The task that generated these events (optional)
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -113,8 +118,9 @@ def serialize_telemetry_events(
 
     # Upload to Supabase
     try:
-        upload_to_reports_bucket(str(output_path))
+        public_url = upload_to_reports_bucket(str(output_path), query=task)
         print(f"☁️ Uploaded {output_path.name} to Supabase 'reports' bucket.")
+        print(f"🔗 Public URL: {public_url}")
     except Exception as e:
         print(f"❌ Failed to upload to Supabase: {e}")
 
@@ -131,7 +137,7 @@ async def main(task: str = "Compare the price of gpt-4o and DeepSeek-V3"):
     # Collect telemetry
     telemetry = agent.telemetry.private_log
     telemetry = collapse_telemetry_events(telemetry[2:])
-    serialize_telemetry_events(telemetry)
+    serialize_telemetry_events(telemetry, task=task)
 
 
 if __name__ == "__main__":
