@@ -1,11 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { usePageTitle } from "@/components/page-title-context"
 
 export default function AgentPage() {
+  const { setTitle } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("Home");
+  }, [setTitle]);
+
   const [task, setTask] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [result, setResult] = useState<string | null>(null)

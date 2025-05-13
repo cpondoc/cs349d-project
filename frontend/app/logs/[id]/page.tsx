@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useParams } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { fetchLogById, type LogEntry } from "@/lib/api"
 import { EventsList } from "@/components/events-list"
 import Link from "next/link"
+import { usePageTitle } from "@/components/page-title-context"
 
 interface ReportData {
   name: string
@@ -16,12 +17,14 @@ interface ReportData {
 
 export default function LogDetailPage() {
   const params = useParams()
+  const { setTitle } = usePageTitle()
   const [log, setLog] = useState<LogEntry | null>(null)
   const [reportData, setReportData] = useState<ReportData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    setTitle("Log Details")
     const loadLogAndReport = async () => {
       try {
         // Load log details
@@ -56,63 +59,59 @@ export default function LogDetailPage() {
     }
 
     loadLogAndReport()
-  }, [params.id])
+  }, [params.id, setTitle])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Log Details</h1>
-          <Link href="/logs">
-            <Button variant="outline">Back to Logs</Button>
-          </Link>
-        </div>
-
-        <Card className="p-6">
-          {isLoading ? (
-            <div className="text-center py-4">Loading log details and report...</div>
-          ) : error ? (
-            <div className="text-red-500 py-4">{error}</div>
-          ) : log ? (
-            <div className="space-y-6">
+    <div className="">
+      <div className="flex items-center justify-between mb-8">
+        <Link href="/logs">
+          <Button variant="outline">Back to Logs</Button>
+        </Link>
+      </div>
+      <div className="rounded-xl shadow-lg p-0 overflow-hidden">
+        {isLoading ? (
+          <div className="text-center py-4">Loading log details and report...</div>
+        ) : error ? (
+          <div className="text-red-500 py-4">{error}</div>
+        ) : log ? (
+          <div className="space-y-6 p-8">
+            <div>
+              <h2 className="text-sm font-medium text-gray-400">Timestamp</h2>
+              <p className="mt-1 text-lg text-gray-100 font-mono">
+                {new Date(log.created_at).toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <h2 className="text-sm font-medium text-gray-400">Query</h2>
+              <p className="mt-1 text-lg text-gray-100 whitespace-pre-wrap font-mono">
+                {log.query}
+              </p>
+            </div>
+            {log.file && (
               <div>
-                <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400">Timestamp</h2>
-                <p className="mt-1 text-lg text-gray-900 dark:text-white">
-                  {new Date(log.created_at).toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400">Query</h2>
-                <p className="mt-1 text-lg text-gray-900 dark:text-white whitespace-pre-wrap">
-                  {log.query}
-                </p>
-              </div>
-              {log.file && (
-                <div>
-                  <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">Report</h2>
-                  <div className="space-y-4">
-                    {reportData.length > 0 ? (
-                      <div className="space-y-4">
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Found {reportData.length} events
-                        </div>
-                        <EventsList events={reportData} />
+                <h2 className="text-sm font-medium text-gray-400 mb-4">Report</h2>
+                <div className="space-y-4">
+                  {reportData.length > 0 ? (
+                    <div className="space-y-4">
+                      <div className="text-sm text-gray-400">
+                        Found {reportData.length} events
                       </div>
-                    ) : (
-                      <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-                        No events found in report
-                      </div>
-                    )}
-                  </div>
+                      <EventsList events={reportData} />
+                    </div>
+                  ) : (
+                    <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                      No events found in report
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-              Log not found
-            </div>
-          )}
-        </Card>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+            Log not found
+          </div>
+        )}
       </div>
     </div>
   )
