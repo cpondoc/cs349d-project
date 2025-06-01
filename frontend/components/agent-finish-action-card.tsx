@@ -33,7 +33,6 @@ interface Result {
 }
 
 export function AgentFinishActionCard({ event, isExpanded, onToggle }: AgentFinishActionCardProps) {
-  console.log(event)
   const getEventIcon = () => CheckCircle2
   const getEventSummary = () => `Step ${event.properties?.step_no}: Action Taken`
   const [showStepMetadata, setShowStepMetadata] = useState(false)
