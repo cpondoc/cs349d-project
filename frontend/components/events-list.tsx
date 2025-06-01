@@ -1,11 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, ChevronRight } from "lucide-react"
 import type { TelemetryEvent } from "@/lib/types"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { EventCard } from "./event-card"
+import { AgentInitializationCard } from "./agent-initialization-card"
+import { 
+  Play, 
+  StepForward, 
+  CheckCircle2, 
+  Wrench, 
+  Bot,
+  LucideIcon
+} from "lucide-react"
 
 interface EventsListProps {
   events: TelemetryEvent[]
@@ -31,54 +37,54 @@ export function EventsList({ events }: EventsListProps) {
 
   return (
     <div className="space-y-3">
-      {events.map((event, index) => (
-        <Card key={index} className="overflow-hidden">
-          <div
-            className="flex items-center p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-            onClick={() => toggleEvent(index)}
-          >
-            <Button variant="ghost" size="icon" className="h-5 w-5 mr-2">
-              {expandedEvents[index] ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-            </Button>
+      {events.map((event, index) => {
+        if (event.name === "agent_initialization") {
+          return (
+            <AgentInitializationCard
+              key={index}
+              event={event}
+              isExpanded={expandedEvents[index] || false}
+              onToggle={() => toggleEvent(index)}
+            />
+          )
+        }
 
-            <div className="flex-1 flex items-center">
-              <Badge variant={getEventVariant(event.name)} className="mr-3">
-                {event.name}
-              </Badge>
-              <div className="text-sm truncate">{getEventSummary(event)}</div>
-            </div>
-          </div>
-
-          {expandedEvents[index] && (
-            <CardContent className="pt-0 pb-4 px-4 bg-gray-50 dark:bg-gray-800/50">
-              <pre className="text-xs overflow-auto p-2 bg-gray-100 dark:bg-gray-800 rounded-md max-h-96">
-                {JSON.stringify(event, null, 2)}
-              </pre>
-            </CardContent>
-          )}
-        </Card>
-      ))}
+        return (
+          <EventCard
+            key={index}
+            event={event}
+            isExpanded={expandedEvents[index] || false}
+            onToggle={() => toggleEvent(index)}
+            getEventIcon={getEventIcon}
+            getEventSummary={getEventSummary}
+          />
+        )
+      })}
     </div>
   )
 }
 
-function getEventVariant(eventName: string): "default" | "secondary" | "destructive" | "outline" {
+function getEventIcon(eventName: string): LucideIcon {
   switch (eventName) {
     case "agent_run":
-      return "default"
+      return Play
     case "agent_step":
-      return "secondary"
+      return StepForward
     case "agent_end":
-      return "outline"
+      return CheckCircle2
     case "controller_registered_functions":
-      return "outline"
+      return Wrench
+    case "agent_overall_step":
+      return Bot
     default:
-      return "default"
+      return Bot
   }
 }
 
 function getEventSummary(event: TelemetryEvent): string {
   switch (event.name) {
+    case "agent_initialization":
+      return `Initialization of Agent`
     case "agent_run":
       return `Task: ${event.properties?.task || "Unknown"}`
     case "agent_step":

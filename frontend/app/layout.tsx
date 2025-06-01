@@ -6,8 +6,8 @@ import Header from "@/components/Header"
 import "./globals.css"
 
 export const metadata: Metadata = {
+  title: "a11y: Browser Agent Telemetry",
   description: "Dashboard for analyzing browser agent telemetry data",
-  generator: "v0.dev",
   icons: {
     icon: [
       {
@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-950 text-gray-100">
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className="bg-gray-950 text-gray-100" suppressHydrationWarning={true}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <PageTitleProvider>
             <div className="flex min-h-screen">
