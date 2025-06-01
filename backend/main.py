@@ -2,11 +2,12 @@ from langchain_openai import ChatOpenAI
 from browser_use import Agent
 from browser_use.telemetry.views import (
     BaseTelemetryEvent,
-    AgentStepTelemetryEvent,
-    ControllerRegisteredFunctionsTelemetryEvent,
-    AgentStepResponseTelemetryEvent,
     AgentRunTelemetryEvent,
-    AgentEndTelemetryEvent
+    AgentEndTelemetryEvent,
+    AgentInitializationTelemetryEvent,
+    AgentDetermineActionTelemetryEvent,
+    AgentTakeActionTelemetryEvent,
+    AgentFinishActionTelemetryEvent
 )
 import asyncio
 from dotenv import load_dotenv
@@ -27,67 +28,24 @@ from helpers.supabase_client import upload_to_reports_bucket
 def collapse_telemetry_events(
     events: Sequence[BaseTelemetryEvent],
 ) -> list[BaseTelemetryEvent]:
-    from collections import defaultdict
-
-    # Group by agent_id and step
-    grouped_steps = defaultdict(
-        lambda: {"agent_step": None, "step_response": None, "controller_functions": []}
-    )
-
-    agent_runs: dict[str, AgentRunTelemetryEvent] = {}
-    agent_ends: list[AgentEndTelemetryEvent] = []
-
-    # Iterate and populate buckets
-    for event in events:
-        if isinstance(event, AgentRunTelemetryEvent):
-            agent_runs[event.agent_id] = event
-
-        elif isinstance(event, AgentEndTelemetryEvent):
-            agent_ends.append(event)
-
-        elif isinstance(event, AgentStepTelemetryEvent):
-            grouped_steps[(event.agent_id, event.step)]["agent_step"] = event
-
-        elif isinstance(event, AgentStepResponseTelemetryEvent):
-            grouped_steps[(event.agent_id, event.step)]["step_response"] = event
-
-        elif isinstance(event, ControllerRegisteredFunctionsTelemetryEvent):
-            # Assign to all open steps that haven't yet gotten a response
-            for (agent_id, step), parts in grouped_steps.items():
-                if parts["step_response"] is None:
-                    parts["controller_functions"].extend(event.registered_functions)
 
     # Build collapsed results
     collapsed_events: list[BaseTelemetryEvent] = []
 
-    for (agent_id, step), parts in sorted(grouped_steps.items(), key=lambda x: x[0][1]):
-        step_ev = parts["agent_step"]
-        resp_ev = parts["step_response"]
-        if not resp_ev:
-            continue  # incomplete
+    main_event_types = (
+        AgentInitializationTelemetryEvent,
+        AgentRunTelemetryEvent,
+        AgentDetermineActionTelemetryEvent,
+        AgentTakeActionTelemetryEvent,
+        AgentFinishActionTelemetryEvent,
+        AgentEndTelemetryEvent,
+    )
 
-        # Step 1 special case: attach agent_run
-        if step == 1 and agent_id in agent_runs:
-            collapsed_events.append(agent_runs[agent_id])
+    # Iterate and populate buckets
+    for event in events:
+        if isinstance(event, main_event_types):
+            collapsed_events.append(event)
 
-        # Either step_ev (normal step) or just step_response (in step 1 pre-step case)
-        collapsed_events.append(
-            AgentOverallStepTelemetryEvent(
-                agent_id=agent_id,
-                step=step,
-                step_error=step_ev.step_error if step_ev else [],
-                consecutive_failures=step_ev.consecutive_failures if step_ev else 0,
-                step_actions=step_ev.actions if step_ev else [],
-                registered_functions=parts["controller_functions"],
-                previous_goal=resp_ev.previous_goal,
-                memory=resp_ev.memory,
-                next_goal=resp_ev.next_goal,
-                actions_response=resp_ev.actions,
-                page_screenshot=getattr(step_ev, "page_screenshot", None),
-            )
-        )
-
-    collapsed_events.extend(agent_ends)
     return collapsed_events
 
 
@@ -136,7 +94,7 @@ async def main(task: str = "Compare the price of gpt-4o and DeepSeek-V3"):
 
     # Collect telemetry
     telemetry = agent.telemetry.private_log
-    telemetry = collapse_telemetry_events(telemetry[2:])
+    telemetry = collapse_telemetry_events(telemetry)
     serialize_telemetry_events(telemetry, task=task)
 
 
