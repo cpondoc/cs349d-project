@@ -47,6 +47,7 @@ export function AgentFinishActionCard({ event, isExpanded, onToggle }: AgentFini
   const agentStopped = event.properties?.agent_state?.stopped || false
   const numberofFailures = event.properties?.agent_state?.number_of_failures || 0
   const result = event.properties?.agent_state?.last_result || []
+  console.log(result)
 
   // History data
   let historyObject = null
@@ -275,77 +276,77 @@ export function AgentFinishActionCard({ event, isExpanded, onToggle }: AgentFini
                       </div>
                     )}
                   </div>
+                </>
+              )}
 
-                  {/* Results Section */}
-                  {result.length > 0 && (
-                    <div className="rounded-md border border-gray-200 dark:border-gray-700">
-                      <div
-                        className="flex items-center p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-md"
-                        onClick={() => setShowResults(!showResults)}
-                      >
-                        <Button variant="ghost" size="icon" className="h-5 w-5 mr-2">
-                          {showResults ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                        </Button>
-                        <div className="flex items-center space-x-2">
-                          <ListChecks className="h-4 w-4 text-green-500" />
-                          <h3 className="font-medium text-sm">Results</h3>
-                        </div>
-                      </div>
+              {/* Results Section */}
+              {result.length > 0 && (
+                <div className="rounded-md border border-gray-200 dark:border-gray-700">
+                  <div
+                    className="flex items-center p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-md"
+                    onClick={() => setShowResults(!showResults)}
+                  >
+                    <Button variant="ghost" size="icon" className="h-5 w-5 mr-2">
+                      {showResults ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <ListChecks className="h-4 w-4 text-green-500" />
+                      <h3 className="font-medium text-sm">Results</h3>
+                    </div>
+                  </div>
 
-                      {showResults && (
-                        <div className="p-4 pt-2">
-                          <div className="space-y-4">
-                            {result.map((item: any, index: number) => (
-                              <div key={index} className="space-y-2">
-                                <div className="flex items-center space-x-2">
-                                  <span className="font-medium text-sm">Result {index + 1}:</span>
-                                </div>
-                                <div className="ml-6 space-y-2">
-                                  <div className="flex items-center space-x-2">
-                                    <span className="text-sm">Status:</span>
-                                    <span className={`text-sm ${item.is_done ? 'text-green-500' : 'text-yellow-500'}`}>
-                                      {item.is_done ? 'Done' : 'In Progress'}
-                                    </span>
-                                  </div>
-                                  {item.success !== null && (
-                                    <div className="flex items-center space-x-2">
-                                      <span className="text-sm">Success:</span>
-                                      <span className={`text-sm ${item.success ? 'text-green-500' : 'text-red-500'}`}>
-                                        {item.success ? 'Yes' : 'No'}
-                                      </span>
-                                    </div>
-                                  )}
-                                  {item.extracted_content && (
-                                    <div className="space-y-1">
-                                      <span className="text-sm">Content:</span>
-                                      <pre className="text-sm font-mono bg-gray-100 dark:bg-gray-800 p-2 rounded-md overflow-x-auto whitespace-pre-wrap">
-                                        {item.extracted_content}
-                                      </pre>
-                                    </div>
-                                  )}
-                                  {item.error && (
-                                    <div className="space-y-1">
-                                      <span className="text-sm text-red-500">Error:</span>
-                                      <pre className="text-sm font-mono bg-red-50 dark:bg-red-900/20 p-2 rounded-md overflow-x-auto whitespace-pre-wrap text-red-500">
-                                        {item.error}
-                                      </pre>
-                                    </div>
-                                  )}
-                                  <div className="flex items-center space-x-2">
-                                    <span className="text-sm">Include in Memory:</span>
-                                    <span className={`text-sm ${item.include_in_memory ? 'text-green-500' : 'text-gray-500'}`}>
-                                      {item.include_in_memory ? 'Yes' : 'No'}
-                                    </span>
-                                  </div>
-                                </div>
+                  {showResults && (
+                    <div className="p-4 pt-2">
+                      <div className="space-y-4">
+                        {result.map((item: any, index: number) => (
+                          <div key={index} className="space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium text-sm">Result {index + 1}:</span>
+                            </div>
+                            <div className="ml-6 space-y-2">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-sm">Status:</span>
+                                <span className={`text-sm ${item.is_done ? 'text-green-500' : 'text-yellow-500'}`}>
+                                  {item.is_done ? 'Done' : 'In Progress'}
+                                </span>
                               </div>
-                            ))}
+                              {item.success !== null && (
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-sm">Success:</span>
+                                  <span className={`text-sm ${item.success ? 'text-green-500' : 'text-red-500'}`}>
+                                    {item.success ? 'Yes' : 'No'}
+                                  </span>
+                                </div>
+                              )}
+                              {item.extracted_content && (
+                                <div className="space-y-1">
+                                  <span className="text-sm">Content:</span>
+                                  <pre className="text-sm font-mono bg-gray-100 dark:bg-gray-800 p-2 rounded-md overflow-x-auto whitespace-pre-wrap">
+                                    {item.extracted_content}
+                                  </pre>
+                                </div>
+                              )}
+                              {item.error && (
+                                <div className="space-y-1">
+                                  <span className="text-sm text-red-500">Error:</span>
+                                  <pre className="text-sm font-mono bg-red-50 dark:bg-red-900/20 p-2 rounded-md overflow-x-auto whitespace-pre-wrap text-red-500">
+                                    {item.error}
+                                  </pre>
+                                </div>
+                              )}
+                              <div className="flex items-center space-x-2">
+                                <span className="text-sm">Include in Memory:</span>
+                                <span className={`text-sm ${item.include_in_memory ? 'text-green-500' : 'text-gray-500'}`}>
+                                  {item.include_in_memory ? 'Yes' : 'No'}
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        ))}
+                      </div>
                     </div>
                   )}
-                </>
+                </div>
               )}
             </div>
           </CardContent>
