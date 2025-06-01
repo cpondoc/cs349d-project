@@ -12,7 +12,6 @@ interface AgentTakeActionCardProps {
 }
 
 export function AgentTakeActionCard({ event, isExpanded, onToggle }: AgentTakeActionCardProps) {
-  console.log(event)
   const getEventIcon = () => Database
   const getEventSummary = () => `Step ${event.properties?.step_no}: Metadata`
   const [showBrowserContext, setShowBrowserContext] = useState(false)

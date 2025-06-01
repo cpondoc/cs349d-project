@@ -6,6 +6,7 @@ import { EventCard } from "./event-card"
 import { AgentInitializationCard } from "./agent-initialization-card"
 import { AgentDetermineActionCard } from "./agent-determine-action-card"
 import { AgentTakeActionCard } from "./agent-take-action-card"
+import { AgentFinishActionCard } from "./agent-finish-action-card"
 import { 
   Play, 
   StepForward, 
@@ -68,6 +69,17 @@ export function EventsList({ events }: EventsListProps) {
         if (event.name === "agent_take_action") {
           return (
             <AgentTakeActionCard
+              key={index}
+              event={event}
+              isExpanded={expandedEvents[index] || false}
+              onToggle={() => toggleEvent(index)}
+            />
+          )
+        }
+
+        if (event.name === "agent_finish_action") {
+          return (
+            <AgentFinishActionCard
               key={index}
               event={event}
               isExpanded={expandedEvents[index] || false}

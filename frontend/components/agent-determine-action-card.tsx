@@ -12,9 +12,7 @@ interface AgentDetermineActionCardProps {
 }
 
 export function AgentDetermineActionCard({ event, isExpanded, onToggle }: AgentDetermineActionCardProps) {
-  console.log(event)
   const getEventIcon = () => Brain
-  console.log(event.properties?.step_no)
   const getEventSummary = () => `Step ${event.properties?.step_no}: ${event.properties?.model_output?.current_state?.next_goal}`
   const [showActionDetails, setShowActionDetails] = useState(false)
   const [showCurrentState, setShowCurrentState] = useState(false)
