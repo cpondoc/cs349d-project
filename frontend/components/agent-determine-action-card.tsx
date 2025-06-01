@@ -45,23 +45,6 @@ export function AgentDetermineActionCard({ event, isExpanded, onToggle }: AgentD
     >
       {isExpanded && (
         <div className="pt-2 bg-gray-50 dark:bg-gray-800/50">
-          {/* Images at the top */}
-          {images.length > 0 && (
-            <div className="px-4 pb-4">
-              <div className="space-y-4">
-                {images.map((image: any, index: number) => (
-                  <div key={index} className="rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden flex justify-center">
-                    <img 
-                      src={image.image_url.url} 
-                      alt="Action context"
-                      className="max-h-[500px] w-auto object-contain"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           <CardContent className="mt-4 pt-0 pb-4 px-4 bg-gray-50 dark:bg-gray-800/50">
             <div className="space-y-4">
               {/* Prompt Section */}
@@ -255,6 +238,21 @@ export function AgentDetermineActionCard({ event, isExpanded, onToggle }: AgentD
                 {showBrowserState && (
                   <div className="p-4 pt-2">
                     <div className="space-y-4">
+                      {/* Images */}
+                      {images.length > 0 && (
+                        <div className="space-y-4">
+                          {images.map((image: any, index: number) => (
+                            <div key={index} className="rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden flex justify-center">
+                              <img 
+                                src={image.image_url.url} 
+                                alt="Action context"
+                                className="max-h-[500px] w-auto object-contain"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <span className="font-medium text-sm">Current URL:</span>

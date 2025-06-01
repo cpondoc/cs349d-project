@@ -35,7 +35,7 @@ interface Result {
 export function AgentFinishActionCard({ event, isExpanded, onToggle }: AgentFinishActionCardProps) {
   console.log(event)
   const getEventIcon = () => CheckCircle2
-  const getEventSummary = () => `Step ${event.properties?.step_no}: Action Completed`
+  const getEventSummary = () => `Step ${event.properties?.step_no}: Action Taken`
   const [showStepMetadata, setShowStepMetadata] = useState(false)
   const [showResults, setShowResults] = useState(false)
   const [showRunMetadata, setShowRunMetadata] = useState(false)
@@ -221,6 +221,19 @@ export function AgentFinishActionCard({ event, isExpanded, onToggle }: AgentFini
                     {showActionState && (
                       <div className="p-4 pt-2">
                         <div className="space-y-4">
+                          {/* Screenshot at the top */}
+                          {actionState.screenshot && (
+                            <div className="space-y-2">
+                              <div className="ml-6">
+                                <img 
+                                  src={`data:image/png;base64,${actionState.screenshot}`}
+                                  alt="Page screenshot"
+                                  className="max-h-[500px] w-auto object-contain rounded-md border border-gray-200 dark:border-gray-700"
+                                />
+                              </div>
+                            </div>
+                          )}
+
                           <div className="space-y-2">
                             <div className="flex items-center space-x-2">
                               <span className="font-medium text-sm">Current URL:</span>
@@ -256,21 +269,6 @@ export function AgentFinishActionCard({ event, isExpanded, onToggle }: AgentFini
                                     )}
                                   </div>
                                 ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {actionState.screenshot && (
-                            <div className="space-y-2">
-                              <div className="flex items-center space-x-2">
-                                <span className="font-medium text-sm">Screenshot:</span>
-                              </div>
-                              <div className="ml-6">
-                                <img 
-                                  src={`data:image/png;base64,${actionState.screenshot}`}
-                                  alt="Page screenshot"
-                                  className="max-h-[300px] w-auto object-contain rounded-md border border-gray-200 dark:border-gray-700"
-                                />
                               </div>
                             </div>
                           )}
