@@ -52,11 +52,11 @@ export function AgentDetermineActionCard({ event, isExpanded, onToggle }: AgentD
             <div className="px-4 pb-4">
               <div className="space-y-4">
                 {images.map((image: any, index: number) => (
-                  <div key={index} className="rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  <div key={index} className="rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden flex justify-center">
                     <img 
                       src={image.image_url.url} 
                       alt="Action context"
-                      className="w-full object-contain"
+                      className="max-h-[500px] w-auto object-contain"
                     />
                   </div>
                 ))}
