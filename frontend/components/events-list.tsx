@@ -5,6 +5,7 @@ import type { TelemetryEvent } from "@/lib/types"
 import { EventCard } from "./event-card"
 import { AgentInitializationCard } from "./agent-initialization-card"
 import { AgentDetermineActionCard } from "./agent-determine-action-card"
+import { AgentTakeActionCard } from "./agent-take-action-card"
 import { 
   Play, 
   StepForward, 
@@ -28,7 +29,10 @@ export function EventsList({ events }: EventsListProps) {
     }))
   }
 
-  if (events.length === 0) {
+  // Filter out agent_run events
+  const filteredEvents = events.filter(event => event.name !== "agent_run")
+
+  if (filteredEvents.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500 dark:text-gray-400">
         <p>No events found for this run</p>
@@ -38,7 +42,7 @@ export function EventsList({ events }: EventsListProps) {
 
   return (
     <div className="space-y-3">
-      {events.map((event, index) => {
+      {filteredEvents.map((event, index) => {
         if (event.name === "agent_initialization") {
           return (
             <AgentInitializationCard
@@ -53,6 +57,17 @@ export function EventsList({ events }: EventsListProps) {
         if (event.name === "agent_determine_action") {
           return (
             <AgentDetermineActionCard
+              key={index}
+              event={event}
+              isExpanded={expandedEvents[index] || false}
+              onToggle={() => toggleEvent(index)}
+            />
+          )
+        }
+
+        if (event.name === "agent_take_action") {
+          return (
+            <AgentTakeActionCard
               key={index}
               event={event}
               isExpanded={expandedEvents[index] || false}
@@ -78,8 +93,6 @@ export function EventsList({ events }: EventsListProps) {
 
 function getEventIcon(eventName: string): LucideIcon {
   switch (eventName) {
-    case "agent_run":
-      return Play
     case "agent_step":
       return StepForward
     case "agent_end":
@@ -95,8 +108,6 @@ function getEventIcon(eventName: string): LucideIcon {
 
 function getEventSummary(event: TelemetryEvent): string {
   switch (event.name) {
-    case "agent_run":
-      return `Task: ${event.properties?.task || "Unknown"}`
     case "agent_step":
       return `Step ${event.properties?.step}: ${getActionSummary(event.properties?.actions)}`
     case "agent_end":

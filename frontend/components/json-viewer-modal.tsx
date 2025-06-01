@@ -15,7 +15,6 @@ export function JsonViewerModal({ event, isOpen, onClose }: JsonViewerModalProps
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <span className="font-mono text-sm">{event.name}</span>
-            <span className="text-xs text-gray-500">({new Date(event.properties?.timestamp || Date.now()).toLocaleString()})</span>
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="h-[60vh] rounded-md border p-4">
