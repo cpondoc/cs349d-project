@@ -4,6 +4,7 @@ import { useState } from "react"
 import type { TelemetryEvent } from "@/lib/types"
 import { EventCard } from "./event-card"
 import { AgentInitializationCard } from "./agent-initialization-card"
+import { AgentDetermineActionCard } from "./agent-determine-action-card"
 import { 
   Play, 
   StepForward, 
@@ -49,6 +50,17 @@ export function EventsList({ events }: EventsListProps) {
           )
         }
 
+        if (event.name === "agent_determine_action") {
+          return (
+            <AgentDetermineActionCard
+              key={index}
+              event={event}
+              isExpanded={expandedEvents[index] || false}
+              onToggle={() => toggleEvent(index)}
+            />
+          )
+        }
+
         return (
           <EventCard
             key={index}
@@ -83,8 +95,6 @@ function getEventIcon(eventName: string): LucideIcon {
 
 function getEventSummary(event: TelemetryEvent): string {
   switch (event.name) {
-    case "agent_initialization":
-      return `Initialization of Agent`
     case "agent_run":
       return `Task: ${event.properties?.task || "Unknown"}`
     case "agent_step":
