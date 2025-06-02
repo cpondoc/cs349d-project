@@ -112,6 +112,7 @@ async def main(task: str = "Compare the price of gpt-4o and DeepSeek-V3"):
     telemetry = agent.telemetry.private_log
     telemetry = collapse_telemetry_events(telemetry)
     serialize_telemetry_events(telemetry, task=task)
+    agent.telemetry.private_log = []
 
 
 if __name__ == "__main__":
