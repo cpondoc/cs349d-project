@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { usePageTitle } from "@/components/page-title-context"
 
 export default function AgentPage() {
@@ -47,12 +48,12 @@ export default function AgentPage() {
           <label htmlFor="task" className="block text-sm font-medium text-gray-300 mb-2">
             Enter your task
           </label>
-          <Input
+          <Textarea
             id="task"
             value={task}
             onChange={(e) => setTask(e.target.value)}
             placeholder="e.g., Compare the price of gpt-4o and DeepSeek-V3"
-            className="w-full"
+            className="w-full min-h-[100px] resize-y"
             required
           />
         </div>
