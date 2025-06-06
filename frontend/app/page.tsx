@@ -4,7 +4,7 @@ export const dynamic = "force-static";
 
 export async function generateMetadata() {
   return {
-    title: "Home | a11y",
+    title: "Home | Agent o11y",
   };
 }
 

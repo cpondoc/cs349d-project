@@ -42,7 +42,7 @@ export default function AgentPage() {
 
   return (
     <div className="max-w-2xl w-full pt-8 pl-2">
-      <h1 className="text-3xl font-bold mb-8 text-gray-100">Browser Agent</h1>
+      <h1 className="text-3xl font-bold mb-8 text-gray-100">Use a Browser Use Agent</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="task" className="block text-sm font-medium text-gray-300 mb-2">
